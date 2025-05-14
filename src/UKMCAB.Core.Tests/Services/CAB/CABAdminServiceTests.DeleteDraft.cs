@@ -8,6 +8,7 @@ using UKMCAB.Data.Models;
 using System.Linq;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
+using UKMCAB.Core.Tests.Extensions;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -83,10 +84,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
         {
             // Arrange
             var cabId = Guid.NewGuid();
-            _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>() {
-                    new Document { id = "1", CABId = cabId.ToString(), StatusValue = Status.Draft, URLSlug = "urlSlug" },
-                });
+            var moqData = (new List<Document> { new Document { id = "1", CABId = cabId.ToString(), StatusValue = Status.Draft, URLSlug = "urlSlug" } }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Draft)))
                 .ReturnsAsync(true);
@@ -105,11 +106,13 @@ namespace UKMCAB.Core.Tests.Services.CAB
         public async Task DeleteDraftDocumentAsync_ShouldAddEntryToAuditLogIfCabHasPublishedVersion()
         {
             // Arrange
-            _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>() {
+            var moqData = (new List<Document>() {
                     new Document { id = "1", StatusValue = Status.Published, AuditLog = new List<Audit> { } },
                     new Document { id = "2", StatusValue = Status.Draft },
-                });
+                }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "2" && x.StatusValue == Status.Draft)))
                 .ReturnsAsync(true);
@@ -126,10 +129,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
         public async Task DeleteDraftDocumentAsync_ShouldNotAddEntryToAuditLogIfCabHasNoPublishedVersion()
         {
             // Arrange
-            _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>() {
-                    new Document { id = "1", StatusValue = Status.Draft },
-                });
+            var moqData = (new List<Document> { new Document { id = "1", StatusValue = Status.Draft } }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Draft)))
                 .ReturnsAsync(true);
@@ -146,11 +149,12 @@ namespace UKMCAB.Core.Tests.Services.CAB
         {
             // Arrange
             var cabId = Guid.NewGuid();
-            _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>() {
-                    new Document { id = "1", StatusValue = Status.Archived, SubStatus = SubStatus.PendingApprovalToUnarchive, AuditLog = new List<Audit> { } },
-                    new Document { id = "2", StatusValue = Status.Draft },
-                });
+            var moqData = (new List<Document> { 
+                new Document { id = "1", StatusValue = Status.Archived, SubStatus = SubStatus.PendingApprovalToUnarchive, AuditLog = new List<Audit> { } },
+                new Document { id = "2", StatusValue = Status.Draft }, }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "2" && x.StatusValue == Status.Draft)))
                 .ReturnsAsync(true);

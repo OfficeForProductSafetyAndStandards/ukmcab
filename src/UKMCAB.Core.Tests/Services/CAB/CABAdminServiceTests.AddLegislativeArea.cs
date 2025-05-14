@@ -6,6 +6,10 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Core.Security;
+using UKMCAB.Core.Tests.Extensions;
+using UKMCAB.Data.Models.LegislativeAreas;
+using System.Linq;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -57,19 +61,21 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Arrange
             var cabId = Guid.NewGuid();
             var legislativeArea = new Mock<DocumentLegislativeArea>();
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>
-                {
-                    new()
-                    {
-                        CABId = cabId.ToString(),
-                        StatusValue = Status.Draft,
-                        DocumentLegislativeAreas = new()
+
+            var document = new Document
+            {
+                CABId = cabId.ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = new()
                         {
                             legislativeArea.Object
                         }
-                    }
-                });
+            };
+
+            var moqData = (new List<Document> { document }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             // Act
             await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, Guid.NewGuid(), "La to Add","ogd", false);
