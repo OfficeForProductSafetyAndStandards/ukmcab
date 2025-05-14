@@ -3,7 +3,9 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using UKMCAB.Core.Tests.Extensions;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 
@@ -31,6 +33,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new DocumentLegislativeArea { Status = LAStatus.Draft},
                 },
             };
+            var moqData = (new List<Document> { draftDocument }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument, submitForApproval);
@@ -52,6 +58,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 CABId = "2efe970d-cb83-4f1e-9ced-5489de4af8ca",
                 StatusValue = Status.Published,
             };
+            var moqData = (new List<Document> { draftDocument }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             var createdDocument = new Document();
             Document intermediateDocument = null;
@@ -89,6 +99,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new DocumentLegislativeArea { Status = LAStatus.DeclinedToUnarchiveByOPSS},
                 },
             };
+            var moqData = (new List<Document> { draftDocument }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);
@@ -117,6 +131,11 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new DocumentLegislativeArea { Status = LAStatus.PendingApproval},
                 },
             };
+
+            var moqData = (new List<Document> { draftDocument }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);

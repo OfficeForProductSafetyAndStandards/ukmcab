@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UKMCAB.Data.Models;
 using System.Linq;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Core.Tests.Extensions;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -37,10 +38,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 }
             };
 
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> 
-            {
-                document
-            });
+            var moqData = (new List<Document> { document }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             // Act
             await _sut.ApproveLegislativeAreaAsync(userAccount, Guid.NewGuid(), legislativeAreaId, LAStatus.Approved);
@@ -88,10 +89,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 }
             };
 
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>
-            {
-                document
-            });
+            var moqData = (new List<Document> { document }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             // Act
             await _sut.DeclineLegislativeAreaAsync(userAccount, Guid.NewGuid(), legislativeAreaId, "Test reason", LAStatus.Approved);
