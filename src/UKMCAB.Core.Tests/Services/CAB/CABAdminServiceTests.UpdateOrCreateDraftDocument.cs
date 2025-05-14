@@ -30,7 +30,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new DocumentLegislativeArea { Status = LAStatus.Draft, NewlyCreated = false },
                     new DocumentLegislativeArea { Status = LAStatus.Draft},
                 },
-
             };
 
             // Act 

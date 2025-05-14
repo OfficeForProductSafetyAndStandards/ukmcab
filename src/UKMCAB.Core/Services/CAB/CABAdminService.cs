@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
-using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.EntityFrameworkCore;
 using MoreLinq;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
