@@ -5,24 +5,22 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Subscriptions.Core.Data;
 using UKMCAB.Subscriptions.Core.Domain;
+using UKMCAB.Web.UI.Services.Subscriptions;
 
 namespace UKMCAB.Web.UI.Services
 {
     public class StatsRecorderBackgroundService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly TelemetryClient _telemetryClient;
         private readonly ILogger<StatsRecorderBackgroundService> _logger;
 
         public StatsRecorderBackgroundService(
             IServiceProvider serviceProvider,
-            ISubscriptionRepository subscriptionRepository,
             TelemetryClient telemetryClient,
-            ILogger<StatsRecorderBackgroundService> logger) 
-        { 
+            ILogger<StatsRecorderBackgroundService> logger)
+        {
             _serviceProvider = serviceProvider;
-            _subscriptionRepository = subscriptionRepository;
             _telemetryClient = telemetryClient;
             _logger = logger;
         }
@@ -57,14 +55,14 @@ namespace UKMCAB.Web.UI.Services
         private async Task RecordStats()
         {
             var scope = _serviceProvider.CreateScope();
-            var _cabAdminService = scope.ServiceProvider.GetRequiredService<ICABAdminService>();
-            var _cabRepository = scope.ServiceProvider.GetRequiredService<ICABRepository>();
+            var cabAdminService = scope.ServiceProvider.GetRequiredService<ICABAdminService>();
+            var cabRepository = scope.ServiceProvider.GetRequiredService<ICABRepository>();
+            var subscriptionRepository = scope.ServiceProvider.GetRequiredService<ISubscriptionRepository>();
 
-            await _cabAdminService.RecordStatsAsync();
+            await cabAdminService.RecordStatsAsync();
 
-            var pages1 = await _subscriptionRepository.GetAllAsync(take: 1);
-            var pages2 = await pages1.ToListAsync();
-            var subscriptions = pages2.SelectMany(x => x.Values).ToList();
+            var pages1 = await subscriptionRepository.GetAllAsync();
+            var subscriptions = await pages1.ToListAsync();
 
             var cabSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Cab);
             var searchSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Search);
@@ -75,7 +73,7 @@ namespace UKMCAB.Web.UI.Services
             _telemetryClient.GetMetric(AiTracking.Metrics.SearchSubscriptionsCount)
                 .TrackValue(searchSubscriptionsCount);
 
-            var cabs = await _cabRepository.GetItemLinqQueryable().AsAsyncEnumerable().ToListAsync();
+            var cabs = await cabRepository.GetItemLinqQueryable().AsAsyncEnumerable().ToListAsync();
 
             _telemetryClient.GetMetric(AiTracking.Metrics.CabsWithSchedules)
                 .TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count > 0));

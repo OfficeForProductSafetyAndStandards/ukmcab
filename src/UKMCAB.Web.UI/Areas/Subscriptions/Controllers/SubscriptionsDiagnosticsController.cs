@@ -86,15 +86,15 @@ public class SubscriptionsDiagnosticsController : Controller
     }
 
     [HttpGet("list", Name = Routes.SubscriptionList)]
-    public async Task<IActionResult> ListAsync(string? skip = null)
+    public async Task<IActionResult> ListAsync(int? skip = null)
     {
-        var pages = await _subscriptionRepository.GetAllAsync(skip:skip);
-        var page = await pages.FirstOrDefaultAsync();
+        var page = await _subscriptionRepository.GetAllAsync(skip:skip);
+        
 
         var vm = new SubscriptionsDiagnosticsSubscriptionListViewModel
         {
-            Skip = page?.ContinuationToken,
-            List = page?.Values.ToList(),
+            Skip = (skip ?? 0) + (await page.CountAsync()),
+            List = await page.ToListAsync(),
         };
 
         return View("Subscriptions", vm);

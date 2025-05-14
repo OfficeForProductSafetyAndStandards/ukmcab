@@ -23,6 +23,13 @@ Default region name [None]: us-east-1
 Default output format [None]: json
 ```
 
+## S3
+
+To get all the tests running a S3 bucket needs to be created:
+```PowerShell
+aws --endpoint-url=http://localhost:4566 s3 mb s3://subscriptionscore --profile localstack-test
+```
+
 ### Test S3 Commands
 Run these commands to test the LocalStack S3 service:
 
