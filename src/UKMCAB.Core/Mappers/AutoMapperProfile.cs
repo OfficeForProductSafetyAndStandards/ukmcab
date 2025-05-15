@@ -29,6 +29,6 @@ public class AutoMapperProfile : Profile
         CreateMap<PpeProductType, PpeProductTypeModel>();
         CreateMap<ProtectionAgainstRisk, ProtectionAgainstRiskModel>();
         CreateMap<AreaOfCompetency, AreaOfCompetencyModel>();
-        CreateMap<Document, CABIndexItemOpenSearch>();
+        CreateMap<Document, CABIndexItem>();
     }
 }

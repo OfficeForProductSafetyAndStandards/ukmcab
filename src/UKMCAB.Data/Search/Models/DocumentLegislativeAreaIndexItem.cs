@@ -1,31 +1,30 @@
-﻿using System.Text.Json.Serialization;
-using Azure.Search.Documents.Indexes;
+﻿using OpenSearch.Client;
 
 namespace UKMCAB.Data.Search.Models
 {
     public class DocumentLegislativeAreaIndexItem
     {
-        [JsonIgnore]
+        [Ignore]
         public Guid Id { get; set; }
         
-        [SearchableField(IsFacetable = true, IsFilterable = true)]
+        [Text(Name = "legislativeAreaName")]
         public string LegislativeAreaName { get; set; } = string.Empty;
-        [JsonIgnore]
+        [Ignore]
         public Guid LegislativeAreaId { get; set; }
 
         public DateTime? AppointmentDate { get; set; }
 
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        [Boolean(Name = "isProvisional")]
         public bool? IsProvisional { get; set; }
 
         public DateTime? ReviewDate { get; set; }
 
         public string? Reason { get; set; }
-        
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
+
+        [Boolean(Name = "archived")]
         public bool? Archived { get; set; }
         
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        [Keyword(Name = "status")]
         public string? Status { get; set; }
     }
 }

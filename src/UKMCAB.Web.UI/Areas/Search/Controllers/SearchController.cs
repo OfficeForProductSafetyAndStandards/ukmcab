@@ -31,25 +31,25 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly IEditLockService _editLockService;
         private static readonly List<string> _select = new()
         {
-            nameof(CABIndexItem.CABId),
-            nameof(CABIndexItem.Status),
-            nameof(CABIndexItem.SubStatus),
-            nameof(CABIndexItem.Name),
-            nameof(CABIndexItem.URLSlug),
-            nameof(CABIndexItem.AddressLine1),
-            nameof(CABIndexItem.AddressLine2),
-            nameof(CABIndexItem.TownCity),
-            nameof(CABIndexItem.County),
-            nameof(CABIndexItem.Postcode),
-            nameof(CABIndexItem.Country),
-            nameof(CABIndexItem.BodyTypes),
-            nameof(CABIndexItem.MRACountries),
-            nameof(CABIndexItem.RegisteredOfficeLocation),
-            nameof(CABIndexItem.TestingLocations),
-            nameof(CABIndexItem.LastUpdatedDate),
-            nameof(CABIndexItem.LastUserGroup),
-            nameof(CABIndexItem.CreatedByUserGroup),
-            "DocumentLegislativeAreas/LegislativeAreaName"
+            "cabId",
+            "status",
+            "subStatus",
+            "name",
+            "urlSlug",
+            "addressLine1",
+            "addressLine2",
+            "townCity",
+            "county",
+            "postcode",
+            "country",
+            "bodyTypes",
+            "mraCountries",
+            "registeredOfficeLocation",
+            "testingLocations",
+            "lastUpdatedDate",
+            "lastUserGroup",
+            "createdByUserGroup",
+            "documentLegislativeAreas.legislativeAreaName"
         };
 
         public static class Routes
