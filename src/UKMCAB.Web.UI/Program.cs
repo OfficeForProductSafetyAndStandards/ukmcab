@@ -53,10 +53,7 @@ using UKMCAB.Data.PostgreSQL.Services;
 using UKMCAB.Data.PostgreSQL.Services.WorkflowTask;
 using UKMCAB.Data.PostgreSQL.Services.User;
 using UKMCAB.Data.PostgreSQL.Services.CAB;
-using UKMCAB.Subscriptions.Core.Services;
-using UKMCAB.Subscriptions.Core.Domain.Emails;
-using Azure;
-using UKMCAB.Subscriptions.Core.Data.Models;
+using UKMCAB.Subscriptions.Core.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,13 +66,20 @@ if (builder.Configuration["AppInsightsConnectionString"].IsNotNullOrEmpty())
     });
 }
 
-var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration.GetValue<string>("DataConnectionString"));
+//var dataConnectionString = new DataConnectionString(builder.Configuration.GetValue<string>("DataConnectionString"));
 var dbConfigJson = builder.Configuration.GetSection("RDS_POSTGRES_CREDENTIALS").Get<string>();
 if (dbConfigJson is null)
     throw new InvalidOperationException($"Cannot load connection string configuration");
 var dbConfig = JsonSerializer.Deserialize<PostgreDbConfiguration>(dbConfigJson);
-var connectionString = $"Server={dbConfig.Host};Port={dbConfig.Port};Database={dbConfig.DbName};User Id={dbConfig.Username};Password={dbConfig.Password};Include Error Detail=true";
-builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+var dataConnectionString = $"Server={dbConfig.Host};Port={dbConfig.Port};Database={dbConfig.DbName};User Id={dbConfig.Username};Password={dbConfig.Password};Include Error Detail=true";
+builder.Configuration["ConnectionStrings:DefaultConnection"] = dataConnectionString;
+
+
+var dbSubscriptionsConfigJson = builder.Configuration.GetSection("RDS_POSTGRES_SUBSCRIPTIONS_CREDENTIALS").Get<string>();
+if (dbSubscriptionsConfigJson is null)
+    throw new InvalidOperationException($"Cannot load subscriptions connection string configuration");
+var dbSubscriptionsConfig = JsonSerializer.Deserialize<PostgreDbConfiguration>(dbSubscriptionsConfigJson);
+var dataSubscriptionsConnectionString = $"Server={dbSubscriptionsConfig.Host};Port={dbSubscriptionsConfig.Port};Database={dbSubscriptionsConfig.DbName};User Id={dbSubscriptionsConfig.Username};Password={dbSubscriptionsConfig.Password};Include Error Detail=true";
 
 var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]);
 
@@ -155,11 +159,12 @@ builder.Services.AddSingleton(new BasicAuthenticationOptions
 });
 builder.Services.AddSingleton(new RedisConnectionString(redisConnectionString));
 builder.Services.AddSingleton(cognitiveSearchConnectionString);
-builder.Services.AddSingleton(azureDataConnectionString);
+builder.Services.AddSingleton(new DataConnectionString(dataConnectionString));
+builder.Services.AddSingleton(new SubscriptionDataConnectionString(dataSubscriptionsConnectionString));
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 
 builder.Services.AddDbContextPool<ApplicationDataContext>(options =>
-    options.UseNpgsql(connectionString, (NpgsqlDbContextOptionsBuilder sqlOptions) =>
+    options.UseNpgsql(dataConnectionString, (NpgsqlDbContextOptionsBuilder sqlOptions) =>
     {
         sqlOptions.MigrationsAssembly(typeof(ApplicationDataContext).Assembly.FullName);
 
@@ -203,12 +208,12 @@ builder.Services.AddTransient<ICabLegislativeAreasItemViewModelBuilder, CabLegis
 builder.Services.AddCustomHttpErrorHandling();
 builder.Services.AddGovUkFrontend();
 
-AddSubscriptionCoreServices(builder, azureDataConnectionString);
+AddSubscriptionCoreServices(builder, dataSubscriptionsConnectionString);
 
-builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
-    .PersistKeysToAzureBlobStorage(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, "keys.xml")
-    .SetApplicationName("UKMCAB")
-    .SetDefaultKeyLifetime(TimeSpan.FromDays(365 * 2));
+//builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
+//    .PersistKeysToAzureBlobStorage(dataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, "keys.xml")
+//    .SetApplicationName("UKMCAB")
+//    .SetDefaultKeyLifetime(TimeSpan.FromDays(365 * 2));
 
 builder.Services.Configure<CoreEmailTemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateOptions"));
 builder.Services.AddHostedService<RandomSortGenerator>();
@@ -340,12 +345,13 @@ catch (Exception ex)
 
 
 PostgreAutoMigration.MigrateDatabase(app);
+SubscriptionAutoMigration.MigrateDatabase(app);
 
 app.Run();
 
 #region Subscriptions stuff
 
-static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureDataConnectionString azureDataConnectionString)
+static void AddSubscriptionCoreServices(WebApplicationBuilder builder, DataConnectionString subscriptionsConnectionString)
 {
     var subscriptionsDateTimeProvider = new SubscriptionsDateTimeProvider();
     builder.Services.AddSingleton<IDateTimeProvider>(subscriptionsDateTimeProvider);
@@ -353,7 +359,10 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
     builder.Services.AddTransient<ICabService, SubscriptionsCabService>();          // INJECT OUR OWN `ICabService` as this is slightly more efficient in that it doesn't use a json api
     var subscriptionServicesCoreOptions = new SubscriptionsCoreServicesOptions
     {
-        DataConnectionString = builder.Configuration["subscriptions_data_connstr"] ?? azureDataConnectionString,
+        AwsServiceUrl = builder.Configuration.GetSection("Aws:ServiceUrl").Value,
+        AwsAccessKey = builder.Configuration.GetSection("Aws:AccessKey").Value ?? string.Empty,
+        AwsSecretKey = builder.Configuration.GetSection("Aws:SecretKey").Value ?? string.Empty,
+        DataConnectionString = subscriptionsConnectionString,
         SearchQueryStringRemoveKeys = SearchViewModel.NonFilterProperties,
         OutboundEmailSenderMode = OutboundEmailSenderMode.Send,
         GovUkNotifyApiKey = builder.Configuration["GovUkNotifyApiKey"],
@@ -364,34 +373,7 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
 
     builder.Configuration.Bind("SubscriptionsCoreEmailTemplates", subscriptionServicesCoreOptions.EmailTemplates);
 
-    // NOTE:
-    // This function includes:
-    // - BlockedEmailsRepository
-    // - SubscriptionRepository
-    // - TelemetryRepository
-    // all of which extends `Repository` which has a dependency on Azure.Data.Tables.
-    //
-    // - SubscriptionEngine
-    // - SubscriptionService
-    // all of which require Azure.Storage.Blobs.
-    //builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
-
-    SubscriptionsCoreServicesOptions options2 = subscriptionServicesCoreOptions;
-    builder.Services.AddSingleton(options2);
-    builder.Services.AddSingleton(new AzureDataConnectionString(options2.DataConnectionString ?? throw new Exception("options.DataConnectionString is null")));
-    builder.Services.AddTransient<ISubscriptionRepository, MySubscriptionRepository>();
-    builder.Services.AddTransient<IBlockedEmailsRepository, MyBlockedEmailsRepository>();
-    builder.Services.AddTransient<ITelemetryRepository, MyTelemetryRepository>();
-    builder.Services.AddTransient<IRepositories, Repositories>();
-    builder.Services.AddSingleton((Func<IServiceProvider, IEmailTemplatesService>)((IServiceProvider x) => new EmailTemplatesService(options2.EmailTemplates, options2.UriTemplateOptions)));
-    builder.Services.AddSingleton((Func<IServiceProvider, ICabService>)((IServiceProvider x) => new MyCabApiService()));// options2.CabApiOptions ?? throw new Exception("options.CabApiOptions is null"))));
-    builder.Services.AddSingleton((Func<IServiceProvider, IDateTimeProvider>)((IServiceProvider x) => new RealDateTimeProvider()));
-    builder.Services.AddSingleton((Func<IServiceProvider, IOutboundEmailSender>)((IServiceProvider x) => new OutboundEmailSender(options2.GovUkNotifyApiKey ?? throw new Exception("options.GovUkNotifyApiKey is null"), options2.OutboundEmailSenderMode)));
-    JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions();
-    jsonSerializerOptions.Converters.Add(new EmailAddressConverter());
-    builder.Services.AddSingleton((UKMCAB.Subscriptions.Core.Common.Security.Tokens.ISecureTokenProcessor)new UKMCAB.Subscriptions.Core.Common.Security.Tokens.SecureTokenProcessor(options2.EncryptionKey ?? throw new Exception("options.EncryptionKey is null"), jsonSerializerOptions));
-    builder.Services.AddTransient<ISubscriptionEngine, SubscriptionEngine>();
-    builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
+    builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
 
     builder.Services.AddTransient<ISubscriptionEngineCoordinator, SubscriptionEngineCoordinator>();
 
@@ -409,135 +391,3 @@ static void UseSubscriptions(WebApplication app)
 }
 
 #endregion
-
-public class MyCabApiService : ICabService, IDisposable
-{
-    public void Dispose()
-    {
-    }
-
-    public Task<SubscriptionsCoreCabModel?> GetAsync(Guid id)
-    {
-        return Task.FromResult(new SubscriptionsCoreCabModel());
-    }
-
-    public Task<CabApiService.SearchResults> SearchAsync(string? query)
-    {
-        return Task.FromResult(new CabApiService.SearchResults(0, new List<SubscriptionsCoreCabSearchResultModel>()));
-    }
-}
-
-public class MySubscriptionRepository : ISubscriptionRepository
-{
-    public Task DeleteAllAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task DeleteAsync(Keys keys)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task<bool> ExistsAsync(Keys keys)
-    {
-        return Task.FromResult(true);
-    }
-
-    public Task<IAsyncEnumerable<Page<SubscriptionEntity>>> GetAllAsync(string? partitionKey = null, string? skip = null, int? take = null)
-    {
-        async IAsyncEnumerable<Page<SubscriptionEntity>> GetPagesAsync()
-        {
-            yield return new SubscriptionPage();
-        }
-
-        return Task.FromResult(GetPagesAsync());
-    }
-
-    public Task<SubscriptionEntity?> GetAsync(SubscriptionKey key)
-    {
-        return Task.FromResult(new SubscriptionEntity());
-    }
-
-    public Task UpsertAsync(SubscriptionEntity entity)
-    {
-        return Task.CompletedTask;
-    }
-}
-
-public class SubscriptionPage : Page<SubscriptionEntity>
-{
-    public override IReadOnlyList<SubscriptionEntity> Values => new List<SubscriptionEntity>();
-
-    public override string? ContinuationToken => string.Empty;
-
-    public override Response GetRawResponse()
-    {
-        return null;
-    }
-}
-
-public class MyBlockedEmailsRepository : IBlockedEmailsRepository
-{
-    public MyBlockedEmailsRepository()
-    {
-    }
-
-    public Task BlockAsync(EmailAddress emailAddress)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task DeleteAllAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task DeleteAsync(Keys keys)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task<bool> ExistsAsync(Keys keys)
-    {
-        return Task.FromResult(true);
-    }
-
-    public Task<bool> IsBlockedAsync(EmailAddress emailAddress)
-    {
-        return Task.FromResult(true);
-    }
-
-    public Task UnblockAsync(EmailAddress emailAddress)
-    {
-        return Task.CompletedTask;
-    }
-}
-
-public class MyTelemetryRepository : ITelemetryRepository
-{
-    public Task DeleteAllAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task DeleteAsync(Keys keys)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task<bool> ExistsAsync(Keys keys)
-    {
-        return Task.FromResult(true);
-    }
-
-    public Task TrackAsync(string key, string text)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task TrackByEmailAddressAsync(string emailAddress, string text)
-    {
-        return Task.CompletedTask;
-    }
-}

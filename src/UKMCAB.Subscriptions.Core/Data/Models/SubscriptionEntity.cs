@@ -1,0 +1,62 @@
+﻿using System.Runtime.Serialization;
+using UKMCAB.Subscriptions.Core.Domain;
+
+namespace UKMCAB.Subscriptions.Core.Data.Models;
+
+public class SubscriptionEntity : ITableEntity
+{
+    public string? TableKey { get; set; }
+    public string? PartitionKey { get; set; }
+    public string? RowKey { get; set; }
+    public DateTimeOffset? Timestamp { get; set; }
+    public string EmailAddress { get; set; } = null!;
+    public Frequency Frequency { get; set; }
+    public Guid? CabId { get; set; }
+    public string? CabName { get; set; }
+    public string? SearchQueryString { get; set; }
+    public string? SearchKeywords { get; set; }
+    public DateTime? DueBaseDate { get; set; }
+    public string? LastThumbprint { get; set; }
+    public string? BlobName { get; set; }
+
+    public DateTime? GetNextDueDate(IDateTimeProvider dateTimeProvider) => Frequency switch
+    {
+        Frequency.Realtime => dateTimeProvider.UtcNow.AddMinutes(-1),
+        Frequency.Daily => DueBaseDate?.AddDays(1),
+        Frequency.Weekly => DueBaseDate?.AddDays(7),
+        _ => throw new NotImplementedException(),
+    };
+
+    public bool IsDue(IDateTimeProvider dateTimeProvider) => GetNextDueDate(dateTimeProvider) < dateTimeProvider.UtcNow;
+
+    public bool IsInitialised() => LastThumbprint is not null;
+
+    public string? SetThumbprint(string thumbprint)
+    {
+        var rv = LastThumbprint;
+        LastThumbprint = thumbprint;
+        return rv;
+    }
+
+    [IgnoreDataMember]
+    public SubscriptionType SubscriptionType => CabId.HasValue ? SubscriptionType.Cab : SubscriptionType.Search;
+
+    public SubscriptionEntity() { }
+
+    public SubscriptionEntity(Keys keys)
+    {
+        TableKey = keys.TableKey;
+        PartitionKey = keys.PartitionKey;
+        RowKey = keys.RowKey;
+        BlobName = $"{Guid.NewGuid()}.json";
+    }
+
+    public void SetKeys(Keys keys)
+    {
+        TableKey = keys.TableKey;
+        PartitionKey = keys.PartitionKey;
+        RowKey = keys.RowKey;
+    }
+
+    public SubscriptionKey GetKeys() => new SubscriptionKey(new Keys(TableKey, PartitionKey, RowKey));
+}
