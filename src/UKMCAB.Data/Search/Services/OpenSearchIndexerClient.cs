@@ -46,7 +46,7 @@ namespace UKMCAB.Data.Search.Services
             await _openSearchClient.Indices.DeleteAsync(indexerName);
         }
 
-        public async Task BulkIndexAsync(string indexerName, IEnumerable<CABIndexItemOpenSearch> documents)
+        public async Task BulkIndexAsync(string indexerName, IEnumerable<CABIndexItem> documents)
         {
             var response = await _openSearchClient.BulkAsync(b => b
                 .Index(indexerName)
@@ -57,8 +57,7 @@ namespace UKMCAB.Data.Search.Services
             {
                 var errors = string.Join("\n", response.ItemsWithErrors.Select(e => e.Error?.Reason));
                 throw new Exception($"Bulk indexing failed: \n{ errors }");
-            }           
-
+            }
         }
 
         public async Task RunIndexerAsync(string indexerName, CancellationToken token = default)
@@ -70,7 +69,7 @@ namespace UKMCAB.Data.Search.Services
                      .Where(d => d.StatusValue != Status.Historical)
                      .ToList();
 
-            var cabIndexItems = _mapper.Map<List<CABIndexItemOpenSearch>>(docs);
+            var cabIndexItems = _mapper.Map<List<CABIndexItem>>(docs);
 
             await BulkIndexAsync(DataConstants.Search.SEARCH_INDEX, cabIndexItems);
         }

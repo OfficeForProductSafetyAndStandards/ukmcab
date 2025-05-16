@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenSearch.Client;
 using OpenSearch.Net;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
@@ -16,7 +17,7 @@ namespace UKMCAB.Data.Search.Services
 
             services.AddSingleton(searchIndexClient);
             services.AddSingleton(searchIndexerClient);
-            services.AddSingleton<ISearchService>(x=>new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX)));
+            services.AddSingleton<ISearchService, SearchService>();
             services.AddTransient<ISearchServiceManagment, PostgreSearchServiceManagment>();
             services.AddSingleton<ICachedSearchService, CachedSearchService>();
 
@@ -30,7 +31,11 @@ namespace UKMCAB.Data.Search.Services
                 var indexName = DataConstants.Search.SEARCH_INDEX;
 
                 var settings = new OpenSearch.Client.ConnectionSettings(connectionPool)
-                    .DefaultIndex(indexName);
+                    .DefaultIndex(indexName)
+                    .DefaultMappingFor<CABIndexItem>(m => m
+                        .IndexName(indexName)
+                        .IdProperty(p => p.CABId)
+                    );
 
                 return new OpenSearchClient(settings);
                   

@@ -1,6 +1,4 @@
-﻿using UKMCAB.Common.Extensions;
-using UKMCAB.Data.Models;
-using UKMCAB.Data.Search.Models;
+﻿using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
@@ -10,7 +8,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         {
             Name = cab.Name;
             Status = cab.Status;
-            SubStatusName = ((SubStatus)int.Parse(cab.SubStatus)).GetEnumDescription();
+            SubStatusName = cab.SubStatus;
+            // TODO: Revert to this once StatusValue is fixed
+            //SubStatusName = ((SubStatus)int.Parse(cab.SubStatus)).GetEnumDescription();
             CABId = cab.CABId;
             URLSlug = cab.URLSlug;
             Address = StringExt.Join(", ", cab.AddressLine1, cab.AddressLine2, cab.TownCity, cab.County, cab.Postcode, cab.Country);
