@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Globalization;
-using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Interfaces.Services.CachedCAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Services;

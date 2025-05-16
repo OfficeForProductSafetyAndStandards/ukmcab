@@ -1,4 +1,5 @@
-﻿using Polly;
+﻿using Microsoft.EntityFrameworkCore;
+using Polly;
 using Polly.Fallback;
 using UKMCAB.Data.Domain;
 using UKMCAB.Data.Interfaces.Services.User;

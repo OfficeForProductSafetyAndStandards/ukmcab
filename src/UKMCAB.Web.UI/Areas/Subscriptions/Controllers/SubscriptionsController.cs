@@ -1,7 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security;
-using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Interfaces.Services.CachedCAB;
 using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Services;
