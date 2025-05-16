@@ -15,6 +15,8 @@ services:
          condition: service_healthy
      networks:
        - app-network
+     environment:
+        - TZ=Europe/London
    ukmcab-db:
      image: postgres:latest
      hostname: ukmcabdb
@@ -23,6 +25,7 @@ services:
       - POSTGRES_DB=ukmcab
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - TZ=Europe/London
      volumes: 
       - ./.containers/audit-db:/var/lib/postgresql/data
      ports:
