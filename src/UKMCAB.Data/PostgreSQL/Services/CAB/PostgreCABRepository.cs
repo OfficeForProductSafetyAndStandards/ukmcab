@@ -1,6 +1,7 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 

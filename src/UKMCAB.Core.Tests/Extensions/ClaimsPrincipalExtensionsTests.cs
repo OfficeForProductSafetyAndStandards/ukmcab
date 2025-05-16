@@ -5,7 +5,7 @@ using System.Security.Claims;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Security;
 
-namespace UKMCAB.Core.Test.Extensions
+namespace UKMCAB.Core.Tests.Extensions
 {
     [TestFixture]
     public class ClaimsPrincipalExtensionsTests

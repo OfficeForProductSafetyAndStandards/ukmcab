@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
-using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.EntityFrameworkCore;
 using MoreLinq;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Core.Security;
-using UKMCAB.Data;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Interfaces.Services.CachedCAB;
 using UKMCAB.Data.Models;
@@ -336,7 +335,7 @@ namespace UKMCAB.Core.Services.CAB
 
             var lastUpdatedDate = DateTime.Now;
 
-            if (publishType == DataConstants.PublishType.MinorPublish && publishedOrArchivedDocument != null)
+            if (publishType == Data.DataConstants.PublishType.MinorPublish && publishedOrArchivedDocument != null)
             {
                 lastUpdatedDate = publishedOrArchivedDocument.LastUpdatedDate;
             }

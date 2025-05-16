@@ -33,10 +33,12 @@ public class WorkflowTaskServiceTests
         // Arrange
         var task = new WorkflowTask(TaskType.UserAccountRequest, CreateFakeOpssUser(),
             Roles.OPSS.Id, null,
-            null, _faker.Random.Words(), CreateFakeOpssUser(), _faker.Date.Past(), null, null,
+            null, _faker.Random.Words(), CreateFakeOpssUser(), _faker.Date.Past().ToUniversalTime(), null, null,
             false,
             _faker.Random.Guid()
         );
+        task.SentOn = DateTime.UtcNow;
+
         _mockWorkflowTaskRepository.Setup(r => r.GetAsync(It.IsAny<string>()))
             .ReturnsAsync(task.MapToWorkflowTaskData());
 
@@ -81,13 +83,13 @@ public class WorkflowTaskServiceTests
     {
         var task = new WorkflowTask(TaskType.RequestToPublish, userSubmitter,
             forRoleId, userAssigned,
-            DateTime.UtcNow, _faker.Random.Words(), userSubmitter, _faker.Date.Past(), null, null,
+            DateTime.UtcNow, _faker.Random.Words(), userSubmitter, _faker.Date.Past().ToUniversalTime(), null, null,
             completed,
             cabId ?? _faker.Random.Guid(),
             documentLAId ?? _faker.Random.Guid()
         )
         {
-            SentOn = DateTime.Now.AddDays(-1)
+            SentOn = DateTime.UtcNow.AddDays(-1)
         };
         return task;
     }

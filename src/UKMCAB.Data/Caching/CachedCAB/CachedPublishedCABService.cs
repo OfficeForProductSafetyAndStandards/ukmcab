@@ -1,4 +1,5 @@
-﻿using UKMCAB.Common;
+﻿using Microsoft.EntityFrameworkCore;
+using UKMCAB.Common;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Interfaces.Services.CachedCAB;
 using UKMCAB.Data.Models;

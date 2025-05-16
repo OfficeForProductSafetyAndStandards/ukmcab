@@ -87,24 +87,22 @@ public class NotificationController : UI.Controllers.ControllerBase
 
         var skipTake = SkipTake.FromPage(pageNumber - 1, Constants.RowsPerPage);
 
-        var unassignedTask = _workflowTaskService.GetUnassignedByForRoleIdAsync(UserRoleId);
-        var assignedToGroupTask =
-            _workflowTaskService.GetAssignedToGroupForRoleIdAsync(UserRoleId, userId);
-        var completedTask =
-            _workflowTaskService.GetCompletedForRoleIdAsync(UserRoleId);
+        var unassignedTask = await _workflowTaskService.GetUnassignedByForRoleIdAsync(UserRoleId);
+        var assignedToGroupTask = await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(UserRoleId, userId);
+        var completedTask = await _workflowTaskService.GetCompletedForRoleIdAsync(UserRoleId);
 
         Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
             unAssignedItemsTask =
-                BuildTableItemsAsync(await unassignedTask, sf, sd);
+                BuildTableItemsAsync(unassignedTask, sf, sd);
         Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
             assignedToMeItemsTask =
                 BuildTableItemsAsync(assignedToMe, sf, sd);
         Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
             assignedToGroupItemsTask =
-                BuildTableItemsAsync(await assignedToGroupTask, sf, sd);
+                BuildTableItemsAsync(assignedToGroupTask, sf, sd);
         Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
             completedItemsTask =
-                BuildTableItemsAsync(await completedTask, sf, sd);
+                BuildTableItemsAsync(completedTask, sf, sd);
 
         var model = new NotificationsViewModel
         (
@@ -146,7 +144,7 @@ public class NotificationController : UI.Controllers.ControllerBase
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(AssignedToGroupTabName, sf)),
                 AssignedToGroupTabName, $"There are no notifications assigned to another {Roles.NameFor(UserRoleId)} user",
-                (await assignedToGroupTask).Count),
+                (assignedToGroupTask).Count),
             new NotificationsViewModelTable((await completedItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
                 (await completedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
