@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UKMCAB.Data.Models;
 using System.Linq;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Core.Tests.Extensions;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -54,20 +55,21 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var legislativeAreaId = Guid.NewGuid();
             var documentLegislativeArea = new DocumentLegislativeArea { LegislativeAreaId = legislativeAreaId };
             var documentScopeOfAppointment = new DocumentScopeOfAppointment { LegislativeAreaId = legislativeAreaId };
-            var productSchedule = new FileUpload { LegislativeArea = laToRemove };           
-           
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>
-                {
-                    new()
-                    {
-                        CABId = cabId.ToString(),
-                        StatusValue = Status.Draft,
-                        DocumentLegislativeAreas = new() { documentLegislativeArea } ,
-                        ScopeOfAppointments = new() { documentScopeOfAppointment },
-                        Schedules = new () { productSchedule },
-                    }
-                });
+            var productSchedule = new FileUpload { LegislativeArea = laToRemove };
+
+            var document = new Document
+            {
+                CABId = cabId.ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = new() { documentLegislativeArea },
+                ScopeOfAppointments = new() { documentScopeOfAppointment },
+                Schedules = new() { productSchedule },
+            };
+
+            var moqData = (new List<Document> { document }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             // Act
             await _sut.RemoveLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, legislativeAreaId, laToRemove);
@@ -118,17 +120,17 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var cabId = Guid.NewGuid();
             var legislativeAreaId = Guid.NewGuid();
             var documentLegislativeArea = new DocumentLegislativeArea { LegislativeAreaId = legislativeAreaId };
-            
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>
-                {
-                    new()
-                    {
-                        CABId = cabId.ToString(),
-                        StatusValue = Status.Draft,
-                        DocumentLegislativeAreas = new() { documentLegislativeArea } 
-                    }
-                });
+            var document = new Document
+            {
+                CABId = cabId.ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = new() { documentLegislativeArea }
+            };
+
+            var moqData = (new List<Document> { document }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
 
             // Act
             await _sut.ArchiveLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, legislativeAreaId);

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UKMCAB.Data.Models;
 using System.Linq;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Core.Tests.Extensions;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -78,15 +79,14 @@ namespace UKMCAB.Core.Tests.Services.CAB
         {
             // Arrange
             const string cabId = "cabId";
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>
-                {
-                    new()
+            var moqData = (new List<Document> { new()
                     {
                         CABId = cabId,
                         StatusValue = Status.Published
-                    }
-                });
+                    } }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
             _mockCABRepository.Setup(x => x.DeleteAsync(It.IsAny<Document>())).ReturnsAsync(false);
             
             // Act
@@ -104,15 +104,14 @@ namespace UKMCAB.Core.Tests.Services.CAB
         {
             // Arrange
             const string cabId = "cabId";
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>
-                {
-                    new()
+            var moqData = (new List<Document> { new()
                     {
                         CABId = cabId,
                         StatusValue = Status.Published
-                    }
-                });
+                    } }).AsAsyncQueryable();
+            _mockCABRepository.Setup(x => x.GetItemLinqQueryable()).Returns(moqData);
+            _mockCABRepository.Setup(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .Returns<Expression<Func<Document, bool>>>(predicate => Task.FromResult(moqData.ToList()));
             _mockCABRepository.Setup(x => x.DeleteAsync(It.IsAny<Document>())).ReturnsAsync(false);
 
             // Act
